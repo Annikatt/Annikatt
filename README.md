@@ -1,0 +1,3 @@
+- 👋 Hi, I’m @Annikatt
+- 🌱 I’m currently learning GDScript
+- 😄 Pronouns: she/her
