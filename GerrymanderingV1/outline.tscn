@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://cbki4cnjww787"]
+
+[ext_resource type="Script" path="res://outline.gd" id="1_fp1fr"]
+[ext_resource type="Texture2D" uid="uid://ikv30hgldyk8" path="res://images/outline.png" id="1_hx4kc"]
+
+[node name="outline" type="Node2D"]
+script = ExtResource("1_fp1fr")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_hx4kc")
+centered = false

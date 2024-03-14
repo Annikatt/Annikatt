@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://pcan3ud50v7r"]
+
+[ext_resource type="Script" path="res://main_level.gd" id="1_budf5"]
+[ext_resource type="PackedScene" uid="uid://cd74eyrnwjec8" path="res://finalize_button.tscn" id="2_otgfd"]
+
+[node name="main_level" type="Node2D"]
+script = ExtResource("1_budf5")
+
+[node name="finalize_button" parent="." instance=ExtResource("2_otgfd")]
+offset_left = 912.0
+offset_top = 782.0
+offset_right = 1003.0
+offset_bottom = 813.0
+
+[node name="grid" type="Node2D" parent="."]
+
+[node name="outlines" type="Node2D" parent="."]
+
+[node name="districts" type="Node2D" parent="."]

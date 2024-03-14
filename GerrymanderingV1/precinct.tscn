@@ -1,0 +1,39 @@
+[gd_scene load_steps=5 format=3 uid="uid://bb16hs082h2v0"]
+
+[ext_resource type="Script" path="res://precinct.gd" id="1_0mek6"]
+[ext_resource type="Texture2D" uid="uid://kq4tt2ylxtiq" path="res://images/pink.png" id="2_5wnl3"]
+[ext_resource type="Texture2D" uid="uid://b7udg33fcsxfx" path="res://images/yellow.png" id="3_6ie0l"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_q307g"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_5wnl3")
+}],
+"loop": true,
+"name": &"pink",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_6ie0l")
+}],
+"loop": true,
+"name": &"yellow",
+"speed": 5.0
+}]
+
+[node name="precinct" type="Node2D"]
+script = ExtResource("1_0mek6")
+
+[node name="Button" type="Button" parent="."]
+offset_right = 100.0
+offset_bottom = 100.0
+action_mode = 0
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_q307g")
+animation = &"yellow"
+centered = false
+
+[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]

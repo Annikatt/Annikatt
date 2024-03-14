@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://cd74eyrnwjec8"]
+
+[ext_resource type="Script" path="res://finalize_button.gd" id="1_n3o0g"]
+
+[sub_resource type="Theme" id="Theme_fucj7"]
+
+[node name="finalize_button" type="Button"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -1346.0
+offset_bottom = -913.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_fucj7")
+text = "FINALIZE"
+script = ExtResource("1_n3o0g")
+
+[connection signal="pressed" from="." to="." method="_on_pressed"]

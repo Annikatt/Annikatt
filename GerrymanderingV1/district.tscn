@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://l8vi216f15le"]
+
+[ext_resource type="Script" path="res://district.gd" id="1_iruho"]
+
+[node name="district" type="Node2D"]
+script = ExtResource("1_iruho")
