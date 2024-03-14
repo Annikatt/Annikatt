@@ -7,6 +7,7 @@ var rx = null
 var ry = null
 var party = null
 var in_dist = false
+var tile_scale = 1
 
 # Currently randomly assigns 0 (pink) or 1 (yellow), with equal odds
 func _ready():
@@ -55,3 +56,9 @@ func _on_button_pressed():
 	
 func delete():
 	queue_free()
+	
+func set_tile_scale(s):
+	tile_scale = s
+	
+func get_tile_scale():
+	return tile_scale

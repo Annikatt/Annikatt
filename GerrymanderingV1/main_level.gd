@@ -85,8 +85,8 @@ func get_district(n):
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	generate_grid(5,5,300,300,0,0)
-	generate_districts(5)
+	generate_grid(7,7,0.5,300,300,0,0)
+	generate_districts(7)
 	finalize_button.pressed.connect(_finalize.bind())
 
 func _finalize():
@@ -95,7 +95,7 @@ func _finalize():
 # Creates a rectangle of precincts with width and height
 # x and y are global positions
 # rx and ry are the precincts' relative positions
-func generate_grid(width,height,start_x,start_y,start_rx,start_ry):
+func generate_grid(width,height,tile_scale,start_x,start_y,start_rx,start_ry):
 	var x = start_x
 	var y = start_y
 	var rx = start_rx
@@ -107,11 +107,13 @@ func generate_grid(width,height,start_x,start_y,start_rx,start_ry):
 			tile_to_add.set_xy(x,y)
 			tile_to_add.set_rxy(rx,ry)
 			tile_to_add.position = Vector2(x, y)
-			y += 110
+			tile_to_add.scale = Vector2(tile_scale,tile_scale)
+			tile_to_add.set_tile_scale(tile_scale)
+			y += 110 * tile_scale
 			ry += 1
 		y = start_y
 		ry = start_ry
-		x += 110
+		x += 110 * tile_scale
 		rx += 1	
 	for t in grid.get_children():
 		t.click.connect(_tile_clicked.bind(t))
@@ -143,29 +145,35 @@ func _get_district_from_precinct(t):
 
 # Adds outlines to a tile on sides for which true is passed
 func _outline_tile(t,top=true,left=true,right=true,bot=true):
+	var v_scale = t.get_scale()
+	var t_scale = t.get_tile_scale()
 	if top:
 		var new_outline = outline.instantiate()
+		new_outline.scale = v_scale
 		outlines.add_child(new_outline)
 		new_outline.set_direction('horiz')
-		new_outline.position = Vector2(t.get_x() - 10, t.get_y())
+		new_outline.position = Vector2(t.get_x() - 10*t_scale, t.get_y())
 		new_outline.set_tile_relatives(t.get_rx(),t.get_ry(),'top')
 	if left:
 		var new_outline = outline.instantiate()
+		new_outline.scale = v_scale
 		outlines.add_child(new_outline)
 		new_outline.set_direction('vert')
-		new_outline.position = Vector2(t.get_x() - 10, t.get_y() - 10)
+		new_outline.position = Vector2(t.get_x() - 10*t_scale, t.get_y() - 10*t_scale)
 		new_outline.set_tile_relatives(t.get_rx(),t.get_ry(),'left')
 	if right:
 		var new_outline = outline.instantiate()
+		new_outline.scale = v_scale
 		outlines.add_child(new_outline)
 		new_outline.set_direction('vert')
-		new_outline.position = Vector2(t.get_x() + 100, t.get_y() - 10)
+		new_outline.position = Vector2(t.get_x() + 100*t_scale, t.get_y() - 10*t_scale)
 		new_outline.set_tile_relatives(t.get_rx(),t.get_ry(),'right')
 	if bot:
 		var new_outline = outline.instantiate()
+		new_outline.scale = v_scale
 		outlines.add_child(new_outline)
 		new_outline.set_direction('horiz')
-		new_outline.position = Vector2(t.get_x() - 10, t.get_y() + 110)
+		new_outline.position = Vector2(t.get_x() - 10*t_scale, t.get_y() + 110*t_scale)
 		new_outline.set_tile_relatives(t.get_rx(),t.get_ry(),'bot')
 
 # Removes outlines from a tile on sides for which true is passed
@@ -234,7 +242,7 @@ func _tile_clicked(t):
 				districts_used[current_selection.get_num()] = true
 				current_selection.add_tile(t)
 				t.set_in_dist(true)
-				_outline_tile(t)
+				_outline_tile(t,0.5)
 	else:
 		if tile_in_district(t,current_selection):
 			current_selection.remove_tile(t)
@@ -258,5 +266,5 @@ func _tile_clicked(t):
 				districts_used[current_selection.get_num()] = true
 				current_selection.add_tile(t)
 				t.set_in_dist(true)
-				_outline_tile(t)
-	_check_all(5,5)
+				_outline_tile(t,0.5)
+	_check_all(7,7)
