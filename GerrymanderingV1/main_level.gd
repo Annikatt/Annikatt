@@ -9,89 +9,17 @@ extends Node2D
 @onready var finalize_button = get_node("finalize_button")
 var current_selection = null
 var districts_used = []
+var level_scalar = .7
+var n_by_n = 5
 
-# Returns the first available unused district.
-func get_next_district():
-	var i = 0
-	for used in districts_used:
-		if not used:
-			return get_district(i)
-		i += 1
-	return null
-
-# Given relative x and y values, returns a precinct
-func get_precinct(rx,ry):
-	for child in grid.get_children():
-		if child.rx == rx and child.ry == ry:
-			return child
-	return null
-
-# Returns true if precinct t is in district dist, or false otherwise
-func tile_in_district(t,dist):
-	for dist_tile in dist.get_tiles():
-		if dist_tile == t:
-			return true
-	return false
-
-# Returns true if tile t is adjacent to district dist, or false otherwise
-func adjacent_to_district(t,dist):
-	for dist_tile in dist.get_tiles():
-		if adjacent(t,dist_tile):
-			return true
-	return false
-
-# Assumes t1 and t2 are adjacent
-# Returns 'top', 'left', 'right', or 'bot', indicating the position of t1 relative to t2
-func shared_side(t1,t2):
-	if t1.get_ry() == (t2.get_ry() - 1):
-		return 'top'
-	elif t1.get_rx() == (t2.get_rx() - 1):
-		return 'left'
-	elif t1.get_rx() == (t2.get_rx() + 1):
-		return 'right'
-	else:
-		return 'bot'
-
-# Returns a list of 4 booleans, representing top, left, right, and bottom respectively
-# Will be true if there is a tile in dist that is adjacent to t in that direction, or false otherwise
-func adjacencies(t,dist):
-	var sides = [false,false,false,false]
-	for dist_tile in dist.get_tiles():
-		if adjacent(dist_tile,t):
-			if shared_side(dist_tile,t) == 'top':
-				sides[0] = true
-			elif shared_side(dist_tile,t) == 'left':
-				sides[1] = true
-			elif shared_side(dist_tile,t) == 'right':
-				sides[2] = true
-			else:
-				sides[3] = true
-	return sides
-	
-# Given relative x and y values and a position, 'top' ,'left', 'right', or 'bot',
-# returns the outline segment at that location.
-func get_outline(rx,ry,pos):
-	for child in outlines.get_children():
-		if [rx,ry,pos] in child.get_tile_relatives():
-			return child
-	return null
-
-# Returns a district based on its ID number 'num'
-func get_district(n):
-	for child in districts.get_children():
-		if child.get_num() == n:
-			return child
-	return null
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	generate_grid(7,7,0.5,300,300,0,0)
-	generate_districts(7)
+	generate_grid(n_by_n,n_by_n,level_scalar,300,300,0,0)
+	generate_districts(n_by_n)
 	finalize_button.pressed.connect(_finalize.bind())
 
-func _finalize():
-	get_tree().change_scene_to_file('res://end_page.tscn')
-	
+
 # Creates a rectangle of precincts with width and height
 # x and y are global positions
 # rx and ry are the precincts' relative positions
@@ -117,7 +45,8 @@ func generate_grid(width,height,tile_scale,start_x,start_y,start_rx,start_ry):
 		rx += 1	
 	for t in grid.get_children():
 		t.click.connect(_tile_clicked.bind(t))
-		
+
+
 #  Generates n district containers
 func generate_districts(n):
 	for dis in range (n):
@@ -125,7 +54,114 @@ func generate_districts(n):
 		district_to_add.set_num(dis)
 		districts.add_child(district_to_add)
 		districts_used.append(false)	
-	
+
+
+# Returns the first available unused district.
+func get_next_district():
+	var i = 0
+	for used in districts_used:
+		if not used:
+			return get_district_from_num(i)
+		i += 1
+	return null
+
+
+# Given relative x and y values, returns a precinct
+func get_precinct(rx,ry):
+	for child in grid.get_children():
+		if child.rx == rx and child.ry == ry:
+			return child
+	return null
+
+
+# Returns true if precinct t is in district dist, or false otherwise
+func tile_in_district(t,dist):
+	for dist_tile in dist.get_tiles():
+		if dist_tile == t:
+			return true
+	return false
+
+
+# Returns true if tile t is adjacent to district dist, or false otherwise
+func adjacent_to_district(t,dist):
+	for dist_tile in dist.get_tiles():
+		if adjacent(t,dist_tile):
+			return true
+	return false
+
+
+# Assumes t1 and t2 are adjacent
+# Returns 'top', 'left', 'right', or 'bot', indicating the position of t1 relative to t2
+func shared_side(t1,t2):
+	if t1.get_ry() == (t2.get_ry() - 1):
+		return 'top'
+	elif t1.get_rx() == (t2.get_rx() - 1):
+		return 'left'
+	elif t1.get_rx() == (t2.get_rx() + 1):
+		return 'right'
+	else:
+		return 'bot'
+
+
+# Returns a list of 4 booleans, representing top, left, right, and bottom respectively
+# Will be true if there is a tile in dist that is adjacent to t in that direction, or false otherwise
+func adjacencies(t,dist):
+	var sides = [false,false,false,false]
+	for dist_tile in dist.get_tiles():
+		if adjacent(dist_tile,t):
+			if shared_side(dist_tile,t) == 'top':
+				sides[0] = true
+			elif shared_side(dist_tile,t) == 'left':
+				sides[1] = true
+			elif shared_side(dist_tile,t) == 'right':
+				sides[2] = true
+			else:
+				sides[3] = true
+	return sides
+
+
+# Given relative x and y values and a position, 'top' ,'left', 'right', or 'bot',
+# returns the outline segment at that location.
+func get_outline(rx,ry,pos):
+	for child in outlines.get_children():
+		if [rx,ry,pos] in child.get_tile_relatives():
+			return child
+	return null
+
+
+# Returns a district based on its ID number 'num'
+func get_district_from_num(n):
+	for child in districts.get_children():
+		if child.get_num() == n:
+			return child
+	return null
+
+
+# Returns a list with the counts of districts for party 0 and party 1
+func party_results():
+	var p0_count = 0
+	var p1_count = 0
+	for dist in districts.get_children():
+		var p0_dist = 0
+		var p1_dist = 0
+		for t in dist.get_tiles():
+			if t.get_party() == 0:
+				p0_dist += 1
+			else:
+				p1_dist += 1
+		if p0_dist > p1_dist:
+			p0_count += 1
+		else:
+			p1_count += 1
+	return [p0_count,p1_count]
+
+
+# Called on finalize button pressed
+func _finalize():
+	Globals.level1_results = party_results()
+	get_tree().change_scene_to_file('res://end_page.tscn')
+
+
 # Returns true if tile1 and tile2 are adjacent, or false if not
 func adjacent(tile1,tile2):
 	if abs(tile1.get_rx() - tile2.get_rx()) == 1 and tile1.get_ry() == tile2.get_ry():
@@ -135,6 +171,7 @@ func adjacent(tile1,tile2):
 	else:
 		return false
 
+
 # Given a precinct t, returns the district that t is a part of,
 # or null if t is not in any district		
 func _get_district_from_precinct(t):
@@ -142,6 +179,7 @@ func _get_district_from_precinct(t):
 			if tile_in_district(t,child):
 				return child
 	return null			
+
 
 # Adds outlines to a tile on sides for which true is passed
 func _outline_tile(t,top=true,left=true,right=true,bot=true):
@@ -176,6 +214,7 @@ func _outline_tile(t,top=true,left=true,right=true,bot=true):
 		new_outline.position = Vector2(t.get_x() - 10*t_scale, t.get_y() + 110*t_scale)
 		new_outline.set_tile_relatives(t.get_rx(),t.get_ry(),'bot')
 
+
 # Removes outlines from a tile on sides for which true is passed
 func _remove_outline_tile(t,top,left,right,bot):
 	if top:
@@ -191,6 +230,7 @@ func _remove_outline_tile(t,top,left,right,bot):
 		if get_outline(t.get_rx(),t.get_ry(),'bot') != null:
 			get_outline(t.get_rx(),t.get_ry(),'bot').delete()
 
+
 # Returns true iff district dist contains a number of children equal
 # to target
 func _check_size(dist,target):
@@ -198,6 +238,7 @@ func _check_size(dist,target):
 		return true
 	else:
 		return false
+
 
 # Returns true if dist is contiguous, or false otherwise
 func _check_contiguous(dist):
@@ -211,28 +252,28 @@ func _check_contiguous(dist):
 				if t1 not in checked:
 					if adjacent(t1,t2):
 						checked.append(t1)
-	if len(checked) == total:
-		return true
-	return false
-					
+	return len(checked) == total
+
+
 # Checks to make sure that every tile is in a district and
 # every district has between min_size and max_size tiles in it
 # then enables the finalize button if all checks are passed
 func _check_all(min_size, max_size):
 	for t in grid.get_children():
-		if t.get_in_dist() == false:
+		if not t.get_in_dist():
 			finalize_button.disable()
 			return
 	for dist in districts.get_children():
-		if (_check_size(dist,min_size) == false) and (_check_size(dist,max_size) == false):
+		if (not _check_size(dist,min_size)) and (not _check_size(dist,max_size)):
 			finalize_button.disable()
 			return
-		if _check_contiguous(dist) == false:
+		if not _check_contiguous(dist):
 			finalize_button.disable()
 			return
 	finalize_button.enable()
-	
-# Stuff happens on tile clicked
+
+
+# Called on tile clicked
 func _tile_clicked(t):
 	if current_selection == null:
 		current_selection = _get_district_from_precinct(t)
@@ -242,7 +283,7 @@ func _tile_clicked(t):
 				districts_used[current_selection.get_num()] = true
 				current_selection.add_tile(t)
 				t.set_in_dist(true)
-				_outline_tile(t,0.5)
+				_outline_tile(t)
 	else:
 		if tile_in_district(t,current_selection):
 			current_selection.remove_tile(t)
@@ -266,5 +307,5 @@ func _tile_clicked(t):
 				districts_used[current_selection.get_num()] = true
 				current_selection.add_tile(t)
 				t.set_in_dist(true)
-				_outline_tile(t,0.5)
-	_check_all(7,7)
+				_outline_tile(t)
+	_check_all(n_by_n,n_by_n)

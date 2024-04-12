@@ -12,7 +12,11 @@ var tile_scale = 1
 # Currently randomly assigns 0 (pink) or 1 (yellow), with equal odds
 func _ready():
 	var parties = $AnimatedSprite2D.sprite_frames.get_animation_names()
-	party = randi() % parties.size()
+	if Globals.level == 0:
+		party = randi() % parties.size()
+	else:
+		party = Globals.level1_precincts[Globals.precinct_counter]
+		Globals.precinct_counter += 1
 	$AnimatedSprite2D.play(parties[party])
 
 # For testing purposes: returns string "(x,y)"
