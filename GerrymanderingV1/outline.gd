@@ -7,6 +7,7 @@ func set_direction(d):
 	direction = d
 	if direction == 'horiz':
 		rotate(-PI/2)
+		
 
 func set_tile_relatives(tx,ty,pos):
 	if pos == 'top':

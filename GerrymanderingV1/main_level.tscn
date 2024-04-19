@@ -12,6 +12,8 @@ offset_top = 782.0
 offset_right = 1003.0
 offset_bottom = 813.0
 
+[node name="background" type="Node2D" parent="."]
+
 [node name="grid" type="Node2D" parent="."]
 
 [node name="outlines" type="Node2D" parent="."]

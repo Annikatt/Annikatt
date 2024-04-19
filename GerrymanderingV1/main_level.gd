@@ -11,14 +11,20 @@ var current_selection = null
 var districts_used = []
 var level_scalar = .7
 var n_by_n = 5
+var start_x = 200
+var start_y = 200
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	generate_grid(n_by_n,n_by_n,level_scalar,300,300,0,0)
+	generate_grid(4,4,level_scalar,start_x,start_y,0,0)
+	generate_grid(3,3,level_scalar,get_grid_xy(4,2)[0],get_grid_xy(4,2)[1],4,2)
 	generate_districts(n_by_n)
 	finalize_button.pressed.connect(_finalize.bind())
 
+
+func get_grid_xy(x,y):
+	return [start_x + x * 110 * level_scalar, start_y + y * 110 * level_scalar]
 
 # Creates a rectangle of precincts with width and height
 # x and y are global positions
